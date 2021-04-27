@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:workerlocatorapp/providers/auth.dart';
 import 'package:workerlocatorapp/screens/home.dart';
 import 'package:workerlocatorapp/screens/login_screen.dart';
+import 'package:workerlocatorapp/screens/signup_screen.dart';
 
 void main() {
   runApp(MyApp());

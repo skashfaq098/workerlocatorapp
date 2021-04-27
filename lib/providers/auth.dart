@@ -89,11 +89,53 @@ class Auth with ChangeNotifier {
     }
   }
 
+  Future<void> AuthenticationRegister(String name, String email, String pass,
+      String passConfirm, String role, String endpoint) async {
+    try {
+      final response = await http.post(
+        Uri.https('worker-arfaz-test.herokuapp.com', '/api/v1/users/$endpoint'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          "name": name,
+          "email": email,
+          "password": pass,
+          "passwordConfirm": passConfirm,
+          "role": role
+        }),
+      );
+
+      final responceData = json.decode(response.body);
+      print(responceData);
+      if (responceData['error'] != null) {
+        throw HttpException(responceData['error']['message']);
+      }
+      _token = responceData['data']['token'];
+      _userEmail = responceData['email'];
+      notifyListeners();
+
+      final prefs = await SharedPreferences.getInstance();
+      final userData = json.encode({
+        'token': _token,
+        'userEmail': _userEmail,
+      });
+
+      prefs.setString('userData', userData);
+
+      print('check' + userData.toString());
+    } catch (e) {
+      throw e;
+    }
+  }
+
   Future<void> login(String email, String password) {
     return Authentication(email, password, 'signIn');
   }
 
-  Future<void> signUp(String email, String password) {
-    return Authentication(email, password, 'signUp');
+  Future<void> signUp(
+      String name, String email, String pass, String passConfirm, String role) {
+    return AuthenticationRegister(
+        name, email, pass, passConfirm, role, 'signUp');
   }
 }

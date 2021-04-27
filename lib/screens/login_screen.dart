@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:workerlocatorapp/providers/auth.dart';
+import 'package:workerlocatorapp/screens/forget_password.dart';
+import 'package:workerlocatorapp/screens/signup_screen.dart';
 import 'package:workerlocatorapp/utils/http_exception.dart';
 import '../helpers/customcliptwo.dart';
 import '../helpers/customclipone.dart';
@@ -21,6 +23,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   Map<String, String> _authData = {'email': '', 'password': ''};
   void _showerrorDialog(String message) {
+    print(message);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -155,12 +158,21 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   Padding(
                     padding: EdgeInsets.only(left: width / 2, top: 20),
-                    child: Text(
-                      "FORGOT PASSWORD ?",
-                      style: GoogleFonts.raleway(
-                          fontSize: 12,
-                          color: Color(0xff0abde3),
-                          fontWeight: FontWeight.w700),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ForgetPassword()),
+                        );
+                      },
+                      child: Text(
+                        "FORGOT PASSWORD ?",
+                        style: GoogleFonts.raleway(
+                            fontSize: 12,
+                            color: Color(0xff0abde3),
+                            fontWeight: FontWeight.w700),
+                      ),
                     ),
                   ),
                   Center(
@@ -210,9 +222,17 @@ class _LoginPageState extends State<LoginPage> {
                     height: 10,
                   ),
                   Center(
-                    child: Text(
-                      "Sign Up",
-                    ),
+                    child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SignUpPage()),
+                          );
+                        },
+                        child: Text(
+                          "Sign Up",
+                        )),
                   ),
                 ],
               ),
