@@ -130,11 +130,11 @@ class _LoginPageState extends State<LoginPage> {
                       onChanged: (value) => email = value,
                       decoration: InputDecoration(
                           hintText: 'Email address',
-                          hintStyle: GoogleFonts.raleway(color: Colors.grey),
+                          hintStyle: GoogleFonts.raleway(color: Colors.black),
                           contentPadding: EdgeInsets.only(top: 15, bottom: 15),
                           enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(
-                                  color: Colors.grey[300], width: 2.0)),
+                                  color: Color(0xff0abde3), width: 2.0)),
                           focusedBorder: UnderlineInputBorder(
                               borderSide: BorderSide(
                                   color: Color(0xff46ddbf), width: 1.0))),
@@ -146,11 +146,11 @@ class _LoginPageState extends State<LoginPage> {
                       onChanged: (value) => pass = value,
                       decoration: InputDecoration(
                           hintText: 'Password',
-                          hintStyle: GoogleFonts.raleway(color: Colors.grey),
+                          hintStyle: GoogleFonts.raleway(color: Colors.black),
                           contentPadding: EdgeInsets.only(top: 15, bottom: 15),
                           enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(
-                                  color: Colors.grey[300], width: 2.0)),
+                                  color: Color(0xff0abde3), width: 2.0)),
                           focusedBorder: UnderlineInputBorder(
                               borderSide: BorderSide(
                                   color: Color(0xff46ddbf), width: 1.0))),
@@ -184,22 +184,24 @@ class _LoginPageState extends State<LoginPage> {
                         child: Material(
                           elevation: 10,
                           borderRadius: BorderRadius.circular(12),
-                          child: Container(
-                            width: 200,
-                            decoration: BoxDecoration(
-                                color: Color(0xff0abde3),
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                    color: Color(0xff31b8b1).withOpacity(0.5),
-                                    width: 2)),
-                            height: 40,
-                            child: Center(
-                              child: ElevatedButton(
-                                child: Text('Login'),
-                                onPressed: () {
-                                  _submit(email, pass);
-                                },
-                              ),
+                          child: GestureDetector(
+                            onTap: () {
+                              _submit(email, pass);
+                            },
+                            child: Container(
+                              width: 200,
+                              decoration: BoxDecoration(
+                                  color: Color(0xff0abde3),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                      color: Color(0xff31b8b1).withOpacity(0.5),
+                                      width: 2)),
+                              height: 40,
+                              child: Center(
+                                  child: Text(
+                                'Login',
+                                style: TextStyle(color: Colors.white),
+                              )),
                             ),
                           ),
                         ),
@@ -214,7 +216,7 @@ class _LoginPageState extends State<LoginPage> {
                       "Don't have an account ?",
                       style: GoogleFonts.raleway(
                           fontSize: 18,
-                          color: Colors.grey[400],
+                          color: Color(0xff0abde3),
                           fontWeight: FontWeight.w700),
                     ),
                   ),
@@ -249,10 +251,10 @@ Widget input(String hint, bool pass) {
     child: TextFormField(
       decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.raleway(color: Colors.grey),
+          hintStyle: GoogleFonts.raleway(color: Color(0xff0abde3)),
           contentPadding: EdgeInsets.only(top: 15, bottom: 15),
           enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey[300], width: 2.0)),
+              borderSide: BorderSide(color: Color(0xff0abde3), width: 2.0)),
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Color(0xff46ddbf), width: 1.0))),
     ),

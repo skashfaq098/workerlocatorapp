@@ -51,7 +51,7 @@ class TextFormFieldHelper extends StatelessWidget {
           onChanged: onChanged,
           decoration: new InputDecoration(
             hintText: hintText,
-            prefixIcon: Icon(prefixIconData, color: Colors.green),
+            prefixIcon: Icon(prefixIconData, color: Color(0xff0abde3)),
             suffixIcon: IconButton(
               icon: Icon(suffixIconData, color: Colors.grey),
               onPressed: suffixonPressed,
@@ -61,7 +61,8 @@ class TextFormFieldHelper extends StatelessWidget {
             fillColor: Colors.grey[100],
             filled: true,
             focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.green, width: 1.0),
+              borderSide:
+                  const BorderSide(color: Color(0xff0abde3), width: 1.0),
               borderRadius: BorderRadius.circular(10.0),
             ),
             enabledBorder: OutlineInputBorder(

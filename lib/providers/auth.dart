@@ -12,9 +12,14 @@ class Auth with ChangeNotifier {
 
   String _token;
   String _userEmail;
+  String _phone;
 
   bool get isAuth {
     return token != null;
+  }
+
+  bool get isPhone {
+    return _phone != null;
   }
 
   String get token {
@@ -45,9 +50,28 @@ class Auth with ChangeNotifier {
 
     final extractedUserData =
         json.decode(pref.getString('userData')) as Map<String, Object>;
-
     _token = extractedUserData['token'];
+
+    final response = await http.get(
+      Uri.https(
+          'worker-arfaz-test.herokuapp.com', '/api/v1/users/getMyDetails'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $_token',
+      },
+    );
+
+    final resData = json.decode(response.body);
     _userEmail = extractedUserData['userEmail'];
+
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      print(jsonDecode(response.body));
+    }
+    if (response.body == null) {
+      return false;
+    }
     notifyListeners();
     return true;
   }
@@ -76,14 +100,77 @@ class Auth with ChangeNotifier {
       notifyListeners();
 
       final prefs = await SharedPreferences.getInstance();
+      String usersEmail = "";
       final userData = json.encode({
         'token': _token,
-        'userEmail': _userEmail,
+        'userEmail': email,
       });
-
+      prefs.setString('token', _token);
       prefs.setString('userData', userData);
+      prefs.setString('usersEmail', email);
 
-      print('check' + userData.toString());
+      print('check' + usersEmail);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> VerifyOTP(String phone, String code) async {
+    String token = "";
+    final prefs = await SharedPreferences.getInstance();
+    token = (prefs.getString('token') ?? '');
+    try {
+      final response = await http.post(
+        Uri.https(
+            'worker-arfaz-test.herokuapp.com', '/api/v1/verifyPhone/verifyOtp'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(<String, String>{
+          "phone": phone,
+          "code": code,
+        }),
+      );
+
+      final responceData = json.decode(response.body);
+      print(responceData);
+      if (responceData['error'] != null) {
+        throw HttpException(responceData['error']['message']);
+      }
+      notifyListeners();
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> SendOTP(String phone) async {
+    String token = "";
+    final prefs = await SharedPreferences.getInstance();
+    token = (prefs.getString('token') ?? '');
+    try {
+      final response = await http.post(
+        Uri.https(
+            'worker-arfaz-test.herokuapp.com', '/api/v1/verifyPhone/sendOtp'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(<String, String>{
+          "phone": phone,
+        }),
+      );
+
+      final responceData = json.decode(response.body);
+      if (response.statusCode == 201) {
+        prefs.setString('phone', phone);
+        _phone = phone;
+      }
+      print(responceData);
+      if (responceData['error'] != null) {
+        throw HttpException(responceData['error']['message']);
+      }
+      notifyListeners();
     } catch (e) {
       throw e;
     }
@@ -137,5 +224,13 @@ class Auth with ChangeNotifier {
       String name, String email, String pass, String passConfirm, String role) {
     return AuthenticationRegister(
         name, email, pass, passConfirm, role, 'signUp');
+  }
+
+  Future<void> sendOTP(String phone) {
+    return SendOTP(phone);
+  }
+
+  Future<void> verifyOTP(String phone, String code) {
+    return VerifyOTP(phone, code);
   }
 }

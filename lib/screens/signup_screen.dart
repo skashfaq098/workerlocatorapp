@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:group_radio_button/group_radio_button.dart';
 import 'package:provider/provider.dart';
 import 'package:workerlocatorapp/helpers/customcliptwo.dart';
 import 'package:workerlocatorapp/providers/auth.dart';
@@ -21,7 +22,9 @@ class _SignUpPageState extends State<SignUpPage> {
   String email = "";
   String pass = "";
   String passConfirm = "";
-  String role = "recruiter";
+  String role = "worker";
+  bool isRegistered = false;
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   void _showerrorDialog(String message) {
     showDialog(
@@ -69,6 +72,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
+    print(role);
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -191,34 +195,52 @@ class _SignUpPageState extends State<SignUpPage> {
                         Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              // Container(
-                              //   width: width / 2 - 40,
-                              //   child: RadioListTile<SignInType>(
-                              //     activeColor: Color(0xff0abde3),
-                              //     title: const Text("Worker"),
-                              //     value: SignInType.worker,
-                              //     groupValue: _signInType,
-                              //     onChanged: (SignInType value) {
-                              //       setState(() {
-                              //         _signInType = value;
-                              //       });
-                              //     },
-                              //   ),
-                              // ),
-                              // Container(
-                              //   width: width / 2 - 40,
-                              //   child: RadioListTile<SignInType>(
-                              //     activeColor: Color(0xff0abde3),
-                              //     title: const Text("Recruiter"),
-                              //     value: SignInType.recruiter,
-                              //     groupValue: _signInType,
-                              //     onChanged: (SignInType value) {
-                              //       setState(() {
-                              //         _signInType = value;
-                              //       });
-                              //     },
-                              //   ),
-                              // ),
+                              RadioButton(
+                                description: "Worker",
+                                value: "worker",
+                                groupValue: role,
+                                onChanged: (value) => setState(
+                                  () => role = value,
+                                ),
+                                activeColor: Colors.red,
+                              ),
+                              RadioButton(
+                                description: "Recruiter",
+                                value: "recruiter",
+                                groupValue: role,
+                                onChanged: (value) => setState(
+                                  () => role = value,
+                                ),
+
+                                // Container(
+                                //   width: width / 2 - 40,
+                                //   child: RadioListTile<SignInType>(
+                                //     activeColor: Color(0xff0abde3),
+                                //     title: const Text("Worker"),
+                                //     value: SignInType.worker,
+                                //     groupValue: _signInType,
+                                //     onChanged: (SignInType value) {
+                                //       setState(() {
+                                //         _signInType = value;
+                                //       });
+                                //     },
+                                //   ),
+                                // ),
+                                // Container(
+                                //   width: width / 2 - 40,
+                                //   child: RadioListTile<SignInType>(
+                                //     activeColor: Color(0xff0abde3),
+                                //     title: const Text("Recruiter"),
+                                //     value: SignInType.recruiter,
+                                //     groupValue: _signInType,
+                                //     onChanged: (SignInType value) {
+                                //       setState(() {
+                                //         _signInType = value;
+                                //       });
+                                //     },
+                                //   ),
+                                // ),
+                              )
                             ]),
                         Center(
                           child: Padding(
@@ -229,22 +251,22 @@ class _SignUpPageState extends State<SignUpPage> {
                               child: Material(
                                 elevation: 10,
                                 borderRadius: BorderRadius.circular(12),
-                                child: Container(
-                                  width: 200,
-                                  decoration: BoxDecoration(
-                                      color: Color(0xff0abde3),
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                          color: Color(0xff31b8b1)
-                                              .withOpacity(0.5),
-                                          width: 2)),
-                                  height: 40,
-                                  child: Center(
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        _submit(name, email, pass, passConfirm,
-                                            role);
-                                      },
+                                child: GestureDetector(
+                                  onTap: () {
+                                    _submit(
+                                        name, email, pass, passConfirm, role);
+                                  },
+                                  child: Container(
+                                    width: 200,
+                                    decoration: BoxDecoration(
+                                        color: Color(0xff0abde3),
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                            color: Color(0xff31b8b1)
+                                                .withOpacity(0.5),
+                                            width: 2)),
+                                    height: 40,
+                                    child: Center(
                                       child: const Text('Register'),
                                     ),
                                   ),
@@ -258,7 +280,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             "Already got Account?",
                             style: GoogleFonts.raleway(
                                 fontSize: 18,
-                                color: Colors.grey[400],
+                                color: Color(0xff0abde3),
                                 fontWeight: FontWeight.w700),
                           ),
                         ),
@@ -268,11 +290,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         Center(
                           child: ElevatedButton(
                               onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => LoginPage()),
-                                );
+                                Navigator.pop(context);
                               },
                               child: Text(
                                 "Login",

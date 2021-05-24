@@ -70,6 +70,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Forget Password'),
+        backgroundColor: Color(0xff0abde3),
         elevation: 0.0,
       ),
       body: SafeArea(
