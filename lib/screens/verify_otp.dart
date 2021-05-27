@@ -1,16 +1,22 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workerlocatorapp/providers/auth.dart';
 import 'package:workerlocatorapp/utils/http_exception.dart';
+import 'package:http/http.dart' as http;
 
 class VerifyOTP extends StatefulWidget {
+  final String id;
+  const VerifyOTP({Key key, this.id}) : super(key: key);
+
   @override
   _VerifyOTPState createState() => _VerifyOTPState();
 }
 
 class _VerifyOTPState extends State<VerifyOTP> {
-  String phone = "8268471487";
+  String phone = "";
   void initState() {
     super.initState();
     _loadCounter();
@@ -19,7 +25,7 @@ class _VerifyOTPState extends State<VerifyOTP> {
   _loadCounter() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      phone = (prefs.getString('phone') ?? '');
+      phone = widget.id;
     });
     print(phone);
   }
@@ -46,24 +52,54 @@ class _VerifyOTPState extends State<VerifyOTP> {
     );
   }
 
-  Future _verifyOTP(String phone, String code) async {
+  // Future _verifyOTP(String phone, String code) async {
+  //   try {
+  //     await Provider.of<Auth>(context, listen: false).verifyOTP(phone, code);
+  //   } on HttpException catch (e) {
+  //     var errorMessage = 'Authentication Failed';
+  //     if (e.toString().contains('INVALID_EMAIL')) {
+  //       errorMessage = 'Invalid email';
+  //       _showerrorDialog(errorMessage);
+  //     } else if (e.toString().contains('EMAIL_NOT_FOUND')) {
+  //       errorMessage = 'This email not found';
+  //       _showerrorDialog(errorMessage);
+  //     } else if (e.toString().contains('INVALID_PASSWORD')) {
+  //       errorMessage = 'Invalid Password';
+  //       _showerrorDialog(errorMessage);
+  //     }
+  //   } catch (error) {
+  //     var errorMessage = 'Plaese try again later';
+  //     _showerrorDialog(errorMessage);
+  //   }
+  // }
+  Future<void> _verifyOTP(String phone, String code) async {
+    String token = "";
+    final prefs = await SharedPreferences.getInstance();
+    token = (prefs.getString('token') ?? '');
     try {
-      await Provider.of<Auth>(context, listen: false).verifyOTP(phone, code);
-    } on HttpException catch (e) {
-      var errorMessage = 'Authentication Failed';
-      if (e.toString().contains('INVALID_EMAIL')) {
-        errorMessage = 'Invalid email';
-        _showerrorDialog(errorMessage);
-      } else if (e.toString().contains('EMAIL_NOT_FOUND')) {
-        errorMessage = 'This email not found';
-        _showerrorDialog(errorMessage);
-      } else if (e.toString().contains('INVALID_PASSWORD')) {
-        errorMessage = 'Invalid Password';
-        _showerrorDialog(errorMessage);
+      final response = await http.post(
+        Uri.https(
+            'worker-arfaz-test.herokuapp.com', '/api/v1/verifyPhone/verifyOtp'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(<String, String>{
+          "phone": phone,
+          "code": code,
+        }),
+      );
+
+      final responceData = json.decode(response.body);
+      print(responceData);
+      if (response.statusCode == 201) {
+        _showerrorDialog("Mobile Number Verified");
       }
-    } catch (error) {
-      var errorMessage = 'Plaese try again later';
-      _showerrorDialog(errorMessage);
+      if (responceData['error'] != null) {
+        throw HttpException(responceData['error']['message']);
+      }
+    } catch (e) {
+      throw e;
     }
   }
 
@@ -108,7 +144,7 @@ class _VerifyOTPState extends State<VerifyOTP> {
                   ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          _verifyOTP("8268471487", code);
+                          _verifyOTP(phone, code);
                         });
                       },
                       child: Text('Submit')),

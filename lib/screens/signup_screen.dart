@@ -9,6 +9,7 @@ import 'package:workerlocatorapp/providers/auth.dart';
 import 'package:workerlocatorapp/screens/login_screen.dart';
 import 'package:workerlocatorapp/utils/http_exception.dart';
 import '../helpers/customclipone.dart';
+import 'package:http/http.dart' as http;
 
 enum SignInType { worker, recruiter }
 
@@ -31,7 +32,7 @@ class _SignUpPageState extends State<SignUpPage> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(
-          'An Error Occurs',
+          'Alert',
           style: TextStyle(color: Colors.blue),
         ),
         content: Text(message),
@@ -47,28 +48,58 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Future _submit(String name, String email, String pass, String passConfirm,
-      String role) async {
+  Future<void> _submit(String name, String email, String pass,
+      String passConfirm, String role) async {
     try {
-      await Provider.of<Auth>(context, listen: false)
-          .signUp(name, email, pass, passConfirm, role);
-    } on HttpException catch (e) {
-      var errorMessage = 'Authentication Failed';
-      if (e.toString().contains('INVALID_EMAIL')) {
-        errorMessage = 'Invalid email';
-        _showerrorDialog(errorMessage);
-      } else if (e.toString().contains('EMAIL_NOT_FOUND')) {
-        errorMessage = 'This email not found';
-        _showerrorDialog(errorMessage);
-      } else if (e.toString().contains('INVALID_PASSWORD')) {
-        errorMessage = 'Invalid Password';
-        _showerrorDialog(errorMessage);
+      final response = await http.post(
+        Uri.https('worker-arfaz-test.herokuapp.com', '/api/v1/users/signUp'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          "name": name,
+          "email": email,
+          "password": pass,
+          "passwordConfirm": passConfirm,
+          "role": role
+        }),
+      );
+
+      final responceData = json.decode(response.body);
+      print(responceData);
+      if (response.statusCode == 201) {
+        _showerrorDialog("Registered");
       }
-    } catch (error) {
-      var errorMessage = 'Plaese try again later';
-      _showerrorDialog(errorMessage);
+      if (responceData['error'] != null) {
+        throw HttpException(responceData['error']['message']);
+      }
+    } catch (e) {
+      throw e;
     }
   }
+
+  // Future _submit(String name, String email, String pass, String passConfirm,
+  //     String role) async {
+  //   try {
+  //     await Provider.of<Auth>(context, listen: false)
+  //         .signUp(name, email, pass, passConfirm, role);
+  //   } on HttpException catch (e) {
+  //     var errorMessage = 'Authentication Failed';
+  //     if (e.toString().contains('INVALID_EMAIL')) {
+  //       errorMessage = 'Invalid email';
+  //       _showerrorDialog(errorMessage);
+  //     } else if (e.toString().contains('EMAIL_NOT_FOUND')) {
+  //       errorMessage = 'This email not found';
+  //       _showerrorDialog(errorMessage);
+  //     } else if (e.toString().contains('INVALID_PASSWORD')) {
+  //       errorMessage = 'Invalid Password';
+  //       _showerrorDialog(errorMessage);
+  //     }
+  //   } catch (error) {
+  //     var errorMessage = 'Plaese try again later';
+  //     _showerrorDialog(errorMessage);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -267,7 +298,10 @@ class _SignUpPageState extends State<SignUpPage> {
                                             width: 2)),
                                     height: 40,
                                     child: Center(
-                                      child: const Text('Register'),
+                                      child: const Text(
+                                        'Register',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
                                     ),
                                   ),
                                 ),

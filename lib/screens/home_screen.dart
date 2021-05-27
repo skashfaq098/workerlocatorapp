@@ -9,6 +9,7 @@ import 'package:workerlocatorapp/screens/create_post.dart';
 import 'package:workerlocatorapp/screens/getMyApplications.dart';
 import 'package:workerlocatorapp/screens/getMyPost.dart';
 import 'package:workerlocatorapp/screens/posts_screen.dart';
+import 'package:workerlocatorapp/screens/sendOTP.dart';
 import 'package:workerlocatorapp/screens/userprofile.dart';
 import 'package:http/http.dart' as http;
 
@@ -166,6 +167,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                         GetMyPost()));
                               },
                             ),
+                            ListTile(
+                              title: Text("Verify Number"),
+                              trailing:
+                                  Icon(Icons.edit, color: Color(0xff0abde3)),
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        SendOTP()));
+                              },
+                            ),
                             Column(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
@@ -205,6 +217,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (BuildContext context) =>
                                         GetMyApplication()));
+                              },
+                            ),
+                            ListTile(
+                              title: Text("Verify Number"),
+                              trailing:
+                                  Icon(Icons.edit, color: Color(0xff0abde3)),
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        SendOTP()));
                               },
                             ),
                             Column(

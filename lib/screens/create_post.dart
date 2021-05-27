@@ -1,10 +1,15 @@
+import 'dart:convert';
+
+import 'package:flutter/services.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:multi_image_picker2/multi_image_picker2.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workerlocatorapp/helpers/text_form_field_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:workerlocatorapp/screens/sendOTP.dart';
-import 'dart:convert';
 
+import 'package:dio/dio.dart';
+import 'package:workerlocatorapp/screens/sendOTP.dart';
 import 'package:workerlocatorapp/utils/http_exception.dart';
 
 class CreatePOst extends StatefulWidget {
@@ -13,6 +18,11 @@ class CreatePOst extends StatefulWidget {
 }
 
 class _CreatePOstState extends State<CreatePOst> {
+  Dio dio = Dio();
+
+  List<Asset> images = <Asset>[];
+  String _error = 'No Error Dectected';
+
   String token = "";
   void initState() {
     super.initState();
@@ -23,6 +33,106 @@ class _CreatePOstState extends State<CreatePOst> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       token = (prefs.getString('token') ?? '');
+    });
+  }
+
+  developerlibs(
+      String title, String location, String contact, String category) async {
+    var dio = Dio();
+    var map = new Map<String, dynamic>();
+    map['title'] = title;
+    map['location'] = location;
+    map['contact'] = contact;
+    map['category'] = category;
+
+    FormData formData = FormData.fromMap({
+      "title": title,
+      "location": location,
+      "contact": contact,
+      "category": category,
+    });
+    var params = {
+      "title": title,
+      "location": location,
+      "contact": contact,
+      "category": category,
+    };
+    dio.options.headers['content-Type'] = 'application/json; charset=UTF-8';
+    dio.options.headers["Authorization"] = "Bearer $token";
+    Response response = await dio.post(
+      "https://worker-arfaz-test.herokuapp.com/api/v1/posts",
+      data: jsonEncode(map),
+    );
+    if (response.statusCode == 201) {
+      print(response.data);
+    }
+  }
+
+  _saveImage(
+      String title, String location, String contact, String category) async {
+    if (images != null) {
+      for (var i = 0; i < images.length; i++) {
+        ByteData byteData = await images[i].getByteData();
+        List<int> imageData = byteData.buffer.asUint8List();
+        MultipartFile multipartFile = MultipartFile.fromBytes(
+          imageData,
+          filename: images[i].name,
+          contentType: MediaType('image', 'jpg'),
+        );
+        FormData formData = FormData.fromMap({
+          "images": multipartFile,
+        });
+
+        dio.options.headers['content-Type'] = 'application/json; charset=UTF-8';
+        dio.options.headers["Authorization"] = "Bearer $token";
+        var response = await dio.post(
+            'https://worker-arfaz-test.herokuapp.com/api/v1/posts',
+            data: formData);
+        if (response.statusCode == 201) {
+          print(response);
+        } else {
+          Map<String, dynamic> _responseMap = json.decode(response.data);
+          Scaffold.of(context).showSnackBar(new SnackBar(
+            content: new Text(_responseMap['message']),
+          ));
+        }
+      }
+    }
+  }
+
+  Future<void> loadAssets() async {
+    List<Asset> resultList = <Asset>[];
+    String error = 'No Error Detected';
+
+    try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 300,
+        enableCamera: true,
+        selectedAssets: images,
+        cupertinoOptions: CupertinoOptions(
+          takePhotoIcon: "chat",
+          doneButtonTitle: "Fatto",
+        ),
+        materialOptions: MaterialOptions(
+          actionBarColor: "#abcdef",
+          actionBarTitle: "Example App",
+          allViewTitle: "All Photos",
+          useDetailsView: false,
+          selectCircleStrokeColor: "#000000",
+        ),
+      );
+    } on Exception catch (e) {
+      error = e.toString();
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
+    setState(() {
+      images = resultList;
+      _error = error;
     });
   }
 
@@ -74,12 +184,9 @@ class _CreatePOstState extends State<CreatePOst> {
               actions: [
                 TextButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SendOTP()),
-                      );
+                      Navigator.pop(context);
                     },
-                    child: Text('Verify Phone'))
+                    child: Text('Okay'))
               ],
             ));
   }
@@ -206,6 +313,10 @@ class _CreatePOstState extends State<CreatePOst> {
                         ),
                       ),
                     ],
+                  ),
+                  ElevatedButton(
+                    child: Text("Pick images"),
+                    onPressed: loadAssets,
                   ),
                   SizedBox(
                     height: 15,

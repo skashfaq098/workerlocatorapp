@@ -289,38 +289,6 @@ class MapScreenState extends State<ProfilePage>
                                           ),
                                         ],
                                       )),
-                                  Padding(
-                                      padding: EdgeInsets.only(
-                                          left: 25.0, right: 25.0, top: 2.0),
-                                      child: new Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: <Widget>[
-                                          Flexible(
-                                            child: Padding(
-                                              padding:
-                                                  EdgeInsets.only(right: 10.0),
-                                              child: new TextField(
-                                                decoration:
-                                                    const InputDecoration(
-                                                        hintText:
-                                                            "Enter Pin Code"),
-                                                enabled: !_status,
-                                              ),
-                                            ),
-                                            flex: 2,
-                                          ),
-                                          Flexible(
-                                            child: new TextField(
-                                              decoration: const InputDecoration(
-                                                  hintText: "Enter State"),
-                                              enabled: !_status,
-                                            ),
-                                            flex: 2,
-                                          ),
-                                        ],
-                                      )),
                                   !_status
                                       ? _getActionButtons()
                                       : new Container(),

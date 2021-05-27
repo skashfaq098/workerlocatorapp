@@ -79,7 +79,7 @@ class _SendOTPState extends State<SendOTP> {
                     child: TextFormField(
                       onChanged: (newValue) => phone = newValue,
                       decoration: const InputDecoration(
-                        labelText: 'Email',
+                        labelText: 'Enter Mobile number',
                       ),
                       validator: (String value) {
                         if (value.trim().isEmpty) {
@@ -98,11 +98,13 @@ class _SendOTPState extends State<SendOTP> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => VerifyOTP()),
+                                builder: (context) => VerifyOTP(
+                                      id: phone,
+                                    )),
                           );
                         });
                       },
-                      child: Text('Submit')),
+                      child: Text('Send')),
                 ],
               ),
             ),

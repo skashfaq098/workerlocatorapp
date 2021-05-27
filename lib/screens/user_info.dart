@@ -44,12 +44,12 @@ class _UserInfoState extends State<UserInfo> {
           'Authorization': 'Bearer $token',
         },
       );
-
       final resData = json.decode(response.body);
       print(response.body);
 
       if (response.statusCode == 200) {
         print(jsonDecode(response.body));
+        // showErrorDialog("Alert");
 
         return userInfoModelFromJson(response.body);
       } else {
@@ -57,7 +57,7 @@ class _UserInfoState extends State<UserInfo> {
       }
     } on HttpException catch (error) {
       // print("my exceptioncatch");
-      showErrorDialog(error.toString());
+      // showErrorDialog(error.toString());
       // print(error.toString());
     }
   }

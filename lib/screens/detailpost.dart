@@ -51,7 +51,7 @@ class _DetailPostState extends State<DetailPost> {
 
       if (response.statusCode == 201) {
         print(jsonDecode(response.body));
-        showErrorDialog("Success");
+        showErrorDialog("Applied Successfully");
 
         return jsonDecode(response.body);
       } else {
@@ -68,7 +68,7 @@ class _DetailPostState extends State<DetailPost> {
     showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-              title: Text('SUCCCESS'),
+              title: Text('Alert'),
               content: Text(message),
               actions: [
                 TextButton(
@@ -265,16 +265,6 @@ class _DetailPostState extends State<DetailPost> {
                         ),
                         Row(
                           children: [
-                            Container(
-                              height: 60,
-                              width: 60,
-                              child: Center(
-                                child: Icon(
-                                  Icons.favorite_border,
-                                  size: 28,
-                                ),
-                              ),
-                            ),
                             SizedBox(
                               width: 16,
                             ),
